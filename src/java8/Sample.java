@@ -10,18 +10,23 @@ public class Sample {
 	}
 
 	public static void main(String[] args) {
-		create(19).thenApply(n -> n+1).thenAccept(System.out::println).thenRun(() -> System.out.println("Run method"));
+		create(19).thenApply(n -> {
+			System.out.println("Current Thread --> "+ Thread.currentThread());
+			return n+1;
+			}).thenAccept(System.out::println);
 		
+		create(10).thenApplyAsync(n -> {
+			// using Async, the execution will be done in a separte thread rather than he  main thread.
+			System.out.println("Current Thread --> "+ Thread.currentThread());
+			return n+1;
+			}).thenAccept(System.out::println);
 	}
-
 }
 
 
-/*OutPut --> 39
-			Run method
-			
-			thenApply accepts and retuns a value
-			thenAccept accept and does not return any value.
-			thenRun does not accept and does not return any value.
-			
+/*OutPut -->
+   	Current Thread --> Thread[main,5,main]
+	39
+	Current Thread --> Thread[ForkJoinPool.commonPool-worker-1,5,main]
+	39
 */
